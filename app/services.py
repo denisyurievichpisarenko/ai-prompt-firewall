@@ -76,6 +76,19 @@ class SecurityGatewayService:
         start_total = time.perf_counter()
         raw_prompt = payload.user_prompt
 
+        if not raw_prompt.strip():
+            return SecurityResponse(final_verdict="ALLOW",
+                                    original_prompt="",
+                                    sanitized_prompt="",
+                                    pii_found=[],
+                                    is_jailbreak=False,
+                                    jailbreak_risk_score="",
+                                    metrics=ShieldMetrics(
+                                        regex_processing_time_ms=0.00,
+                                        llm_processing_time_ms=0.00,
+                                        total_time_ms=0.00)
+                                    )
+
         # Layer 1: Regex PII Scrubbing
         start_regex = time.perf_counter()
         sanitized_prompt, pii_found = self._sanitize_pii(raw_prompt)

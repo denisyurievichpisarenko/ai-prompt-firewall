@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Dict, List
 
 class SecurityRequest(BaseModel):
-    user_prompt: str = Field(..., min_length=1, description="The raw prompt submitted by the user")
+    user_prompt: str = Field(..., min_length=0, description="The raw prompt submitted by the user")
 
 class ShieldMetrics(BaseModel):
     regex_processing_time_ms: float
