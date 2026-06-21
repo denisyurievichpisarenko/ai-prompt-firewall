@@ -1,0 +1,16 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# PyCharm / JetBrains IDE project settings
+.idea/
+
+# Local Virtual Environments
+.venv/
+venv/
+ENV/
+
+# Local logs or data dumps
+*.log
