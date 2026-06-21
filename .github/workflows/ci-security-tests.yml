@@ -26,10 +26,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install fastapi uvicorn pydantic pytest pytest-asyncio httpx jinja2 python-multipart ollama
 
-    # Step 4: INSTALL OLLAMA BINARY (Fast script, always runs)
-    - name: Install Ollama Binary
+    # Step 4: INSTALL OLLAMA BINARY
+    - name: Install Standalone Ollama Binary
       run: |
-        curl -fsSL https://ollama.com/install.sh | sh
+        curl -L https://github.com/ollama/ollama/releases/latest/download/ollama-linux-amd64.tar.zst -o ollama.tar.zst
+        sudo tar -C /usr --zstd -xf ollama.tar.zst
 
     # NEW STEP 5: CACHE LLAMA MODEL WEIGHTS
     # This step tells GitHub to look for the hidden model folder inside the runner's home directory.
@@ -37,23 +38,22 @@ jobs:
       id: cache-ollama
       uses: actions/cache@v4
       with:
-        path: /usr/share/ollama/.ollama/models
+        path: ~/.ollama/models
         key: ${{ runner.os }}-ollama-llama3-v2
         restore-keys: |
           ${{ runner.os }}-ollama-llama3-
 
-    # Step 6: PULL WEIGHTS ONLY IF CACHE WAS MISSING
-    # The 'if' condition checks if the previous cache step successfully found the data.
-    - name: Pull Llama3 Model Weights (Cache Miss Only)
-      if: steps.cache-ollama.outputs.cache-hit != 'true'
-      run: |
-        ollama pull llama3
-
-    # Step 7: SPIN UP ENGINE BACKGROUND PROCESS
+    # Step 6: SPIN UP ENGINE BACKGROUND PROCESS
     - name: Start Ollama Engine
       run: |
         ollama serve > ollama.log 2>&1 &
         sleep 10
+
+    # Step 7: PULL WEIGHTS ONLY IF CACHE WAS MISSING
+    - name: Pull Llama3 Model Weights (Cache Miss Only)
+      if: steps.cache-ollama.outputs.cache-hit != 'true'
+      run: |
+        ollama pull llama3
 
     # Step 8: Execute the Pytest suite
     - name: Run Test Suite Matrix
