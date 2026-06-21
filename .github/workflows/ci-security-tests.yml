@@ -21,6 +21,7 @@ jobs:
         python-version: '3.14'
         cache: 'pip'
 
+    # Step 3: Install dependencies
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -32,7 +33,7 @@ jobs:
         curl -L https://github.com/ollama/ollama/releases/latest/download/ollama-linux-amd64.tar.zst -o ollama.tar.zst
         sudo tar -C /usr --zstd -xf ollama.tar.zst
 
-    # NEW STEP 5: CACHE LLAMA MODEL WEIGHTS
+    # Step 5: CACHE LLAMA MODEL WEIGHTS
     # This step tells GitHub to look for the hidden model folder inside the runner's home directory.
     - name: Cache Ollama Models
       id: cache-ollama
